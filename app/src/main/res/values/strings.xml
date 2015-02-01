@@ -13,6 +13,10 @@
     <string name="login_button">Login</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="email_hint">Email</string>
-
+    <string name="signup_error_message">Please you make sure you enter a username, password, and email address</string>
+    <string name="signup_error_title"> Oops!</string>
+    <string name="login_error_message">Please you make sure you enter a username, password</string>
+    <string name="login_error_title"> Oops!</string>
+    <string name="menu_logout_label"> Logout</string>
 
 </resources>
