@@ -5,4 +5,6 @@
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_edit_friends" android:title="@string/menu_edit_friends_label"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_camera" android:title="@string/menu_camera_label"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

@@ -1,5 +1,7 @@
 package com.example.bruce.rapshare;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,6 +37,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
+    protected DialogInterface.OnClickListener mDialogListener = new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which ){
+                switch (which){
+                    case 0: //take pic
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                }
+            }
+
+    };
     public  static  final String TAG = MainActivity.class.getSimpleName();
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -115,16 +133,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            ParseUser.logOut();
-            navigateToLogin();
-
-        }else if (id == R.id.action_edit_friends){
+        switch (id){
+            case  R.id.action_logout:
+                ParseUser.logOut();
+                navigateToLogin();
+                return super.onOptionsItemSelected(item);
+            case  R.id.action_edit_friends:
                 Intent intent = new Intent(this, EditFriendsActivity.class);
-            startActivity(intent);
+                startActivity(intent);
+                return super.onOptionsItemSelected(item);
+            case R.id.action_camera:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setItems(R.array.camera_choices, mDialogListener);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return super.onOptionsItemSelected(item);
+
         }
+        //noinspection SimplifiableIfStatement
+
 
         return super.onOptionsItemSelected(item);
     }
