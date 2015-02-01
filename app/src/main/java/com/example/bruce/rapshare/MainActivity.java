@@ -3,7 +3,10 @@ package com.example.bruce.rapshare;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -19,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.parse.ParseAnalytics;
 import com.parse.ParseUser;
@@ -37,22 +41,70 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
+    public static  final int TAKE_PHOTO_REQUEST = 0;
+    public static  final int TAKE_VIDEO_REQUEST = 1;
+    public static  final int PICK_PHOTO_REQUEST = 2;
+    public static  final int PICK_VIDEO_REQUEST = 3;
+
+    public static  final int MEDIA_TYPE_IMAGE = 4;
+    public static  final int MEDIA_TYPE_VIDEO = 5;
+
+     protected Uri mMediaUri;
+
     protected DialogInterface.OnClickListener mDialogListener = new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which ){
                 switch (which){
                     case 0: //take pic
+
+                        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                            if(mMediaUri==null){
+                                //display an errors
+                                Toast.makeText(MainActivity.this,R.string.error_external_storage,Toast.LENGTH_LONG).show();
+                            }else{
+                                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+                                startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST);
+                            }
                         break;
                     case 1:
+
+                        Intent takeVideoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(takeVideoIntent,TAKE_VIDEO_REQUEST);
                         break;
                     case 2:
+
+                        Intent pickPhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(pickPhotoIntent,PICK_PHOTO_REQUEST);
                         break;
                     case 3:
+
+                        Intent pickVideoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(pickVideoIntent,PICK_VIDEO_REQUEST);
                         break;
                 }
             }
 
     };
+
+    private Uri getOutputMediaFileUri(int mediaTypeImage) {
+         if(isExternalStorageAvailable()){
+            //get the uri
+             return null;
+         }else{
+             return null;
+         }
+
+    }
+    private boolean isExternalStorageAvailable(){
+        String state = Environment.getExternalStorageState();
+        if(state.equals(Environment.MEDIA_MOUNTED)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public  static  final String TAG = MainActivity.class.getSimpleName();
     /**
      * The {@link ViewPager} that will host the section contents.
