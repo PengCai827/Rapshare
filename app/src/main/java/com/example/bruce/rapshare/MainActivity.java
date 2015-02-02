@@ -26,8 +26,11 @@ import android.widget.Toast;
 
 import com.parse.ParseAnalytics;
 import com.parse.ParseUser;
-
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import java.util.SimpleTimeZone;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -69,12 +72,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         break;
                     case 1:
 
-                        Intent takeVideoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                        mMediaUri =getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
                         startActivityForResult(takeVideoIntent,TAKE_VIDEO_REQUEST);
+                        if(mMediaUri==null){
+                            //display an errors
+                            Toast.makeText(MainActivity.this,R.string.error_external_storage,Toast.LENGTH_LONG).show();
+                        }else{
+                            takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+                            takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT,10 );
+                            takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY,0 );//0 for worst quality
+                            startActivityForResult(takeVideoIntent,TAKE_VIDEO_REQUEST);
+                        }
                         break;
                     case 2:
-
-                        Intent pickPhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        Intent pickPhotoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                         startActivityForResult(pickPhotoIntent,PICK_PHOTO_REQUEST);
                         break;
                     case 3:
@@ -83,17 +95,56 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         startActivityForResult(pickVideoIntent,PICK_VIDEO_REQUEST);
                         break;
                 }
+
+
             }
 
     };
 
-    private Uri getOutputMediaFileUri(int mediaTypeImage) {
-         if(isExternalStorageAvailable()){
-            //get the uri
-             return null;
-         }else{
-             return null;
-         }
+    private Uri getOutputMediaFileUri(int mediaType) {
+        if (isExternalStorageAvailable()) {
+            // get the URI
+
+            // 1. Get the external storage directory
+            String appName = MainActivity.this.getString(R.string.app_name);
+            File mediaStorageDir = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    appName);
+
+            // 2. Create our subdirectory
+            if (! mediaStorageDir.exists()) {
+                if (! mediaStorageDir.mkdirs()) {
+                    Log.e(TAG, "Failed to create directory.");
+                    return null;
+                }
+            }
+
+            // 3. Create a file name
+            // 4. Create the file
+            File mediaFile;
+            Date now = new Date();
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(now);
+
+            String path = mediaStorageDir.getPath() + File.separator;
+            if (mediaType == MEDIA_TYPE_IMAGE) {
+                mediaFile = new File(path + "IMG_" + timestamp + ".jpg");
+            }
+            else if (mediaType == MEDIA_TYPE_VIDEO) {
+                mediaFile = new File(path + "VID_" + timestamp + ".mp4");
+            }
+            else {
+                return null;
+            }
+
+            Log.d(TAG, "File: " + Uri.fromFile(mediaFile));
+
+            // 5. Return the file's URI
+            return Uri.fromFile(mediaFile);
+        }
+        else {
+            return null;
+        }
+
 
     }
     private boolean isExternalStorageAvailable(){
@@ -159,6 +210,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
+        }
+    }
+
+    protected  void onActivityResult(int requestCode, int resultCode,Intent data){
+            super.onActivityResult(requestCode,resultCode,data);
+        if(resultCode == RESULT_OK){
+            //success
+             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(mMediaUri);
+            sendBroadcast(mediaScanIntent);
+        }else if(resultCode != RESULT_CANCELED){
+            Toast.makeText(this, R.string.general_error,Toast.LENGTH_LONG).show();
         }
     }
 
