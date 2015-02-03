@@ -25,6 +25,12 @@
     <string name="menu_camera_label">Camera</string>
     <string name="error_external_storage">"There is a problem accessing your device's external storage"</string>
     <string name="general_error">"Sorry, there was an error"</string>
+    <string name="error_selecting_file">There was an error with the file selected. Please select a different file.</string>
+    <string name="error_file_too_large">The selected file is too large! Select a new file.</string>
+
+    <string name="success_message">Message sent!</string>
+    <string name="error_sending_message">There was an error sending your message. Please try again.</string>
+    <string name="error_selecting_file_title">We\'re sorry!</string>
 
     <string-array name="camera_choices">
         <item>Take Picture</item>

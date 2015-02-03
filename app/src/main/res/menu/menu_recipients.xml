@@ -4,5 +4,6 @@
     tools:context="com.example.bruce.rapshare.RecipientsActivity">
     <item android:id="@+id/action_send" android:title="Send"
         android:orderInCategory="100" app:showAsAction="always"
-        android:visible="false"/>
+        android:icon="@drawable/ic_action_send_now"
+        android:visible="true"/>
 </menu>
