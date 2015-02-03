@@ -27,6 +27,9 @@ import android.widget.Toast;
 import com.parse.ParseAnalytics;
 import com.parse.ParseUser;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -51,10 +54,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public static  final int MEDIA_TYPE_IMAGE = 4;
     public static  final int MEDIA_TYPE_VIDEO = 5;
+    public static  final int FILE_SIZE_LIMIT = 1024*1024*10;//10MB
 
      protected Uri mMediaUri;
+    public  static  final String TAG = MainActivity.class.getSimpleName();
 
     protected DialogInterface.OnClickListener mDialogListener = new DialogInterface.OnClickListener(){
+
             @Override
             public void onClick(DialogInterface dialog, int which ){
                 switch (which){
@@ -85,14 +91,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             startActivityForResult(takeVideoIntent,TAKE_VIDEO_REQUEST);
                         }
                         break;
-                    case 2:
-                        Intent pickPhotoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        startActivityForResult(pickPhotoIntent,PICK_PHOTO_REQUEST);
+                    case 2://choose  a pic
+                        Intent choosePhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        choosePhotoIntent.setType("image/*");
+                        Toast.makeText(MainActivity.this,"The selected video must be less than 10MB",Toast.LENGTH_LONG).show();
+                        startActivityForResult(choosePhotoIntent, PICK_PHOTO_REQUEST);
+
                         break;
                     case 3:
 
-                        Intent pickVideoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(pickVideoIntent,PICK_VIDEO_REQUEST);
+                        Intent chooseVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        chooseVideoIntent.setType("video/*");
+                        startActivityForResult(chooseVideoIntent,PICK_VIDEO_REQUEST);
                         break;
                 }
 
@@ -136,7 +146,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 return null;
             }
 
-            Log.d(TAG, "File: " + Uri.fromFile(mediaFile));
+            Log.d("BRUCE", "File: " + Uri.fromFile(mediaFile));
 
             // 5. Return the file's URI
             return Uri.fromFile(mediaFile);
@@ -156,7 +166,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public  static  final String TAG = MainActivity.class.getSimpleName();
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -215,11 +224,57 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     protected  void onActivityResult(int requestCode, int resultCode,Intent data){
             super.onActivityResult(requestCode,resultCode,data);
-        if(resultCode == RESULT_OK){
+        //case 2,case3 选择的pic和video返回到intent data里了。
+        if(resultCode == RESULT_OK) {
             //success
-             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            if (requestCode == PICK_PHOTO_REQUEST || requestCode == PICK_VIDEO_REQUEST) {
+                if (data == null) {
+                    Toast.makeText(this, R.string.general_error, Toast.LENGTH_LONG).show();
+                } else {
+                    mMediaUri = data.getData();
+                }
+                if(requestCode==PICK_VIDEO_REQUEST){
+                    //make file is less than 10MB
+                    int fileSize=0;
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContentResolver().openInputStream(mMediaUri);
+                        fileSize=inputStream.available();
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "There was a problem with the selected file", Toast.LENGTH_LONG).show();
+                        return;
+                    }catch(IOException e){
+                        Toast.makeText(this, "There was a problem with the selected file", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    //finally get called no matter what
+                    finally{
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(fileSize>=FILE_SIZE_LIMIT){
+                        Toast.makeText(this, "The selected file was too large, select a new file", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+
+                }
+            } else {
+
+
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             mediaScanIntent.setData(mMediaUri);
             sendBroadcast(mediaScanIntent);
+        }
+
+            Intent recipientsIntent =new Intent(this,RecipientsActivity.class);
+            recipientsIntent.setData(mMediaUri);
+            startActivity(recipientsIntent);
         }else if(resultCode != RESULT_CANCELED){
             Toast.makeText(this, R.string.general_error,Toast.LENGTH_LONG).show();
         }

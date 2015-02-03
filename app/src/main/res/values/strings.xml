@@ -27,11 +27,12 @@
     <string name="general_error">"Sorry, there was an error"</string>
 
     <string-array name="camera_choices">
-    <item>Take Picture</item>
-    <item>Take Video</item>
-    <item>Choose Picture</item>
-    <item>Choose Video</item>
+        <item>Take Picture</item>
+        <item>Take Video</item>
+        <item>Choose Picture</item>
+        <item>Choose Video</item>
     </string-array>
 
+    <string name="title_activity_recipients">Choose Recipients</string>
 
 </resources>

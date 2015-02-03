@@ -51,7 +51,7 @@ public class friendsFragment extends android.support.v4.app.ListFragment {
                         usernames[i] = user.getUsername();
                         i++;
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getListView().getContext(), android.R.layout.simple_list_item_1,
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getListView().getContext(), android.R.layout.simple_list_item_checked,
                             usernames);
                     setListAdapter(adapter);
                 }else{
