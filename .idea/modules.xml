@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/Rapshare.iml" filepath="$PROJECT_DIR$/Rapshare.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/commons-io-2.4/commons-io-2.4.iml" filepath="$PROJECT_DIR$/commons-io-2.4/commons-io-2.4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/picasso-2.4.0/picasso-2.4.0.iml" filepath="$PROJECT_DIR$/picasso-2.4.0/picasso-2.4.0.iml" />
     </modules>
   </component>
 </project>

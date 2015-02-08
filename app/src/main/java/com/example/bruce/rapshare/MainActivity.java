@@ -22,9 +22,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 
@@ -55,7 +61,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public static  final int MEDIA_TYPE_IMAGE = 4;
     public static  final int MEDIA_TYPE_VIDEO = 5;
     public static  final int FILE_SIZE_LIMIT = 1024*1024*10;//10MB
-
      protected Uri mMediaUri;
     public  static  final String TAG = MainActivity.class.getSimpleName();
 
@@ -222,6 +227,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
+
+    @Override
+
+
     protected  void onActivityResult(int requestCode, int resultCode,Intent data){
             super.onActivityResult(requestCode,resultCode,data);
         //case 2,case3 选择的pic和video返回到intent data里了。
@@ -316,17 +325,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             case  R.id.action_logout:
                 ParseUser.logOut();
                 navigateToLogin();
-                return super.onOptionsItemSelected(item);
+                break;
             case  R.id.action_edit_friends:
                 Intent intent = new Intent(this, EditFriendsActivity.class);
                 startActivity(intent);
-                return super.onOptionsItemSelected(item);
+                break;
             case R.id.action_camera:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setItems(R.array.camera_choices, mDialogListener);
                 AlertDialog dialog = builder.create();
                 dialog.show();
-                return super.onOptionsItemSelected(item);
+                break;
 
         }
         //noinspection SimplifiableIfStatement
